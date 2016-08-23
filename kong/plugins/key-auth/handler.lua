@@ -10,6 +10,8 @@ local KeyAuthHandler = BasePlugin:extend()
 
 KeyAuthHandler.PRIORITY = 1000
 
+local OPTIONS = "OPTIONS"
+
 -- Fast lookup for credential retrieval depending on the type of the authentication
 --
 -- All methods must respect:
@@ -61,6 +63,12 @@ end
 
 function KeyAuthHandler:access(conf)
   KeyAuthHandler.super.access(self)
+
+  -- do not authenticate preflight OPTIONS requests
+  if ngx.req.get_method() == OPTIONS then
+    return
+  end
+
   local key, key_found, credential
   for _, v in ipairs({"query", "header"}) do
     key = retrieve_credentials[v](ngx.req, conf)

@@ -36,6 +36,12 @@ describe("key-auth plugin", function()
 
   describe("Query Authentication", function()
 
+     it("should not authenticate OPTIONS requests", function()
+      local response, status, headers = http_client.options(STUB_POST_URL, {}, {host = "keyauth1.com"})
+      local body = cjson.decode(response)
+      assert.equal(200, status)
+    end)
+
      it("should return invalid credentials and www-authenticate header when the credential is missing", function()
       local response, status, headers = http_client.get(STUB_GET_URL, {}, {host = "keyauth1.com"})
       local body = cjson.decode(response)
